@@ -4,7 +4,7 @@
             "name": "C/C++: g++.exe build and debug active file for Cpp_Notes",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder:Cpp_Notes}\\${fileBasenameNoExtension}.exe",
+            "program": "${workspaceFolder:Cpp_Notes}\\output\\${fileBasenameNoExtension}.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder:Cpp_Notes}",

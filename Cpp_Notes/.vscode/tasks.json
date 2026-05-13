@@ -9,7 +9,7 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${workspaceFolder:Cpp_Notes}\\${fileBasenameNoExtension}.exe"
+                "${workspaceFolder:Cpp_Notes}\\output\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
                 "cwd": "${workspaceFolder:Cpp_Notes}"
