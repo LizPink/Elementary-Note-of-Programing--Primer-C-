@@ -2,7 +2,7 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++.exe build active file for Cpp_Notes",
+            "label": "C/C++: g++.exe build active file (Cpp_Notes)",
             "command": "C:\\Program Files\\mingw64\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
