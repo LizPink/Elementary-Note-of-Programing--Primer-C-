@@ -8,36 +8,5 @@
             "name": "Modern_Cpp",
             "path": "Modern_Cpp"
         }
-    ],
-    "tasks": {
-        "version": "2.0.0",
-        "tasks": [
-            {
-                "type": "shell",
-                "label": "build active file to its project output",
-                "command": "C:\\Program Files\\mingw64\\bin\\g++.exe",
-                "args": [
-                    "-Wall",
-                    "-Wextra",
-                    "-g3",
-                    "-finput-charset=UTF-8",
-                    "-fexec-charset=UTF-8",
-                    "${file}",
-                    "-o",
-                    "${fileWorkspaceFolder}\\output\\${fileBasenameNoExtension}.exe"
-                ],
-                "options": {
-                    "cwd": "${fileWorkspaceFolder}"
-                },
-                "problemMatcher": [
-                    "$gcc"
-                ],
-                "group": {
-                    "kind": "build",
-                    "isDefault": true
-                },
-                "detail": "Build the active C++ file into the output folder of its own workspace folder."
-            }
-        ]
-    }
+    ]
 }
