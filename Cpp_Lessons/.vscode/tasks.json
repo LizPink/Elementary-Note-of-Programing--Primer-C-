@@ -2,17 +2,17 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++.exe build active file",
+            "label": "C/C++: g++.exe build active file for Cpp_Lessons",
             "command": "C:\\Program Files\\mingw64\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
                 "-o",
-                "${fileWorkspaceFolder}\\${fileBasenameNoExtension}.exe"
+                "${workspaceFolder:Cpp_Lessons}\\output\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
-                "cwd": "${fileWorkspaceFolder}"
+                "cwd": "${workspaceFolder:Cpp_Lessons}"
             },
             "problemMatcher": [
                 "$gcc"

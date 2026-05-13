@@ -1,13 +1,13 @@
 {
     "configurations": [
         {
-            "name": "C/C++: g++.exe build and debug active file",
+            "name": "C/C++: g++.exe build and debug active file for Cpp_Lessons",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileWorkspaceFolder}\\${fileBasenameNoExtension}.exe",
+            "program": "${workspaceFolder:Cpp_Lessons}\\${fileBasenameNoExtension}.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileWorkspaceFolder}",
+            "cwd": "${workspaceFolder:Cpp_Lessons}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -24,7 +24,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++.exe build active file"
+            "preLaunchTask": "C/C++: g++.exe build active file for Cpp_Lessons"
         }
     ],
     "version": "2.0.0"

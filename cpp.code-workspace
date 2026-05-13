@@ -8,5 +8,70 @@
             "name": "Cpp_Notes",
             "path": "Cpp_Notes"
         }
-    ]
+    ],
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "build active cpp file",
+                "type": "shell",
+                "command": "cmd",
+                "args": [
+                    "/c",
+                    "if not exist \"${fileWorkspaceFolder}\\output\" mkdir \"${fileWorkspaceFolder}\\output\" && \"C:\\Program Files\\mingw64\\bin\\g++.exe\" -Wall -Wextra -g3 -finput-charset=UTF-8 -fexec-charset=UTF-8 \"${file}\" -o \"${fileWorkspaceFolder}\\output\\${fileBasenameNoExtension}.exe\""
+                ],
+                "options": {
+                    "cwd": "${fileWorkspaceFolder}"
+                },
+                "problemMatcher": [
+                    "$gcc"
+                ],
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                }
+            },
+            {
+                "label": "show vscode variables",
+                "type": "shell",
+                "command": "cmd",
+                "args": [
+                    "/c",
+                    "echo file=${file} && echo fileDirname=${fileDirname} && echo fileWorkspaceFolder=${fileWorkspaceFolder} && echo relativeFileDirname=${relativeFileDirname} && echo workspaceFolder_Cpp_Lessons=${workspaceFolder:Cpp_Lessons} && echo workspaceFolder_Cpp_Notes=${workspaceFolder:Cpp_Notes}"
+                ],
+                "problemMatcher": []
+            }
+        ]
+    },
+    "launch": {
+        "version": "2.0.0",
+        "configurations": [
+            {
+                "name": "Debug active C++ file",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "${fileWorkspaceFolder}\\output\\${fileBasenameNoExtension}.exe",
+                "args": [],
+                "stopAtEntry": false,
+                "cwd": "${fileWorkspaceFolder}",
+                "environment": [],
+                "externalConsole": false,
+                "MIMode": "gdb",
+                "miDebuggerPath": "C:\\Program Files\\mingw64\\bin\\gdb.exe",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    },
+                    {
+                        "description": "Set Disassembly Flavor to Intel",
+                        "text": "-gdb-set disassembly-flavor intel",
+                        "ignoreFailures": true
+                    }
+                ],
+                "preLaunchTask": "build active cpp file"
+            }
+        ]
+    }
 }
