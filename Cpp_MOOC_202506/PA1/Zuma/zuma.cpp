@@ -2,53 +2,146 @@
 
 const int MAX_INITIAL_LENGTH = 10000;
 const int MAX_OPERATIONS = 10000;
-const int MAX_TOTAL_LENGTH = MAX_INITIAL_LENGTH + MAX_OPERATIONS + 5;
+const int MAX_NODES = MAX_INITIAL_LENGTH + MAX_OPERATIONS + 5;
+const int OUTPUT_BUFFER_SIZE = 1 << 20;
 
-int getLength(const char str[]) {
-    int length = 0;
+struct Node {
+    int left;
+    int right;
+    int size;
+    unsigned int priority;
+    char value;
+};
 
-    while (str[length] != '\0') {
-        ++length;
-    }
+Node tree[MAX_NODES];
+int nodeCount = 0;
+int root = 0;
 
-    return length;
+char outputBuffer[OUTPUT_BUFFER_SIZE];
+int outputPosition = 0;
+
+unsigned int randomSeed = 123456789u;
+
+unsigned int nextPriority() {
+    randomSeed ^= randomSeed << 13;
+    randomSeed ^= randomSeed >> 17;
+    randomSeed ^= randomSeed << 5;
+    return randomSeed;
 }
 
-void insertAt(char sequence[], int& length, int position, char color) {
-    for (int i = length; i > position; --i) {
-        sequence[i] = sequence[i - 1];
+int getSize(int node) {
+    if (node == 0) {
+        return 0;
     }
-
-    sequence[position] = color;
-    ++length;
-    sequence[length] = '\0';
+    return tree[node].size;
 }
 
-void removeRange(char sequence[], int& length, int left, int right) {
-    int count = right - left;
-
-    for (int i = right; i < length; ++i) {
-        sequence[i - count] = sequence[i];
+void update(int node) {
+    if (node != 0) {
+        tree[node].size = getSize(tree[node].left) + getSize(tree[node].right) + 1;
     }
-
-    length -= count;
-    sequence[length] = '\0';
 }
 
-void eliminate(char sequence[], int& length, int position) {
-    int current = position;
+int createNode(char value) {
+    ++nodeCount;
+    tree[nodeCount].left = 0;
+    tree[nodeCount].right = 0;
+    tree[nodeCount].size = 1;
+    tree[nodeCount].priority = nextPriority();
+    tree[nodeCount].value = value;
+    return nodeCount;
+}
 
-    while (length > 0 && current >= 0 && current < length) {
-        char color = sequence[current];
+void split(int node, int leftSize, int& leftRoot, int& rightRoot) {
+    if (node == 0) {
+        leftRoot = 0;
+        rightRoot = 0;
+        return;
+    }
 
-        int left = current;
-        int right = current + 1;
+    int currentLeftSize = getSize(tree[node].left);
 
-        while (left > 0 && sequence[left - 1] == color) {
+    if (leftSize <= currentLeftSize) {
+        split(tree[node].left, leftSize, leftRoot, tree[node].left);
+        rightRoot = node;
+        update(rightRoot);
+    } else {
+        split(tree[node].right, leftSize - currentLeftSize - 1, tree[node].right, rightRoot);
+        leftRoot = node;
+        update(leftRoot);
+    }
+}
+
+int merge(int leftRoot, int rightRoot) {
+    if (leftRoot == 0) {
+        return rightRoot;
+    }
+
+    if (rightRoot == 0) {
+        return leftRoot;
+    }
+
+    if (tree[leftRoot].priority < tree[rightRoot].priority) {
+        tree[leftRoot].right = merge(tree[leftRoot].right, rightRoot);
+        update(leftRoot);
+        return leftRoot;
+    } else {
+        tree[rightRoot].left = merge(leftRoot, tree[rightRoot].left);
+        update(rightRoot);
+        return rightRoot;
+    }
+}
+
+char getCharAt(int node, int rank) {
+    int leftSize = getSize(tree[node].left);
+
+    if (rank < leftSize) {
+        return getCharAt(tree[node].left, rank);
+    }
+
+    if (rank == leftSize) {
+        return tree[node].value;
+    }
+
+    return getCharAt(tree[node].right, rank - leftSize - 1);
+}
+
+void insertAt(int position, char value) {
+    int leftRoot = 0;
+    int rightRoot = 0;
+
+    split(root, position, leftRoot, rightRoot);
+
+    int newNode = createNode(value);
+
+    root = merge(merge(leftRoot, newNode), rightRoot);
+}
+
+void eraseRange(int left, int right) {
+    int partA = 0;
+    int partB = 0;
+    int partC = 0;
+
+    split(root, left, partA, partB);
+    split(partB, right - left, partB, partC);
+
+    root = merge(partA, partC);
+}
+
+void eliminateAround(int position) {
+    while (getSize(root) > 0 && position >= 0 && position < getSize(root)) {
+        char color = getCharAt(root, position);
+
+        int left = position;
+        int right = position + 1;
+
+        while (left > 0 && getCharAt(root, left - 1) == color) {
             --left;
         }
 
-        while (right < length && sequence[right] == color) {
+        int currentSize = getSize(root);
+
+        while (right < currentSize && getCharAt(root, right) == color) {
             ++right;
         }
 
@@ -56,57 +149,98 @@ void eliminate(char sequence[], int& length, int position) {
             break;
         }
 
-        removeRange(sequence, length, left, right);
+        eraseRange(left, right);
 
-        if (length == 0) {
+        currentSize = getSize(root);
+
+        if (currentSize == 0) {
             break;
         }
 
-        if (left < length) {
-            current = left;
+        if (left < currentSize) {
+            position = left;
         } else {
-            current = length - 1;
+            position = currentSize - 1;
         }
     }
 }
 
-void printSequence(const char sequence[], int length) {
-    if (length == 0) {
-        std::cout << "-\n";
+void outputChar(char ch) {
+    if (outputPosition >= OUTPUT_BUFFER_SIZE) {
+        std::cout.write(outputBuffer, outputPosition);
+        outputPosition = 0;
+    }
+
+    outputBuffer[outputPosition++] = ch;
+}
+
+void flushOutput() {
+    if (outputPosition > 0) {
+        std::cout.write(outputBuffer, outputPosition);
+        outputPosition = 0;
+    }
+}
+
+void outputTree(int node) {
+    if (node == 0) {
         return;
     }
 
-    for (int i = 0; i < length; ++i) {
-        std::cout << sequence[i];
+    outputTree(tree[node].left);
+    outputChar(tree[node].value);
+    outputTree(tree[node].right);
+}
+
+void outputSequence() {
+    if (getSize(root) == 0) {
+        outputChar('-');
+        outputChar('\n');
+        return;
     }
 
-    std::cout << '\n';
+    outputTree(root);
+    outputChar('\n');
+}
+
+int getLength(const char str[]) {
+    int length = 0;
+
+    while (str[length] != '\0' && str[length] != '\n' && str[length] != '\r') {
+        ++length;
+    }
+
+    return length;
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
 
-    char sequence[MAX_TOTAL_LENGTH];
+    char initial[MAX_INITIAL_LENGTH + 5];
 
-    std::cin.getline(sequence, MAX_TOTAL_LENGTH);
+    std::cin.getline(initial, MAX_INITIAL_LENGTH + 5);
 
-    int length = getLength(sequence);
+    int initialLength = getLength(initial);
 
-    int n = 0;
-    std::cin >> n;
+    for (int i = 0; i < initialLength; ++i) {
+        root = merge(root, createNode(initial[i]));
+    }
 
-    for (int i = 0; i < n; ++i) {
+    int operationCount = 0;
+    std::cin >> operationCount;
+
+    for (int i = 0; i < operationCount; ++i) {
         int position = 0;
         char color = '\0';
 
         std::cin >> position >> color;
 
-        insertAt(sequence, length, position, color);
-        eliminate(sequence, length, position);
-
-        printSequence(sequence, length);
+        insertAt(position, color);
+        eliminateAround(position);
+        outputSequence();
     }
+
+    flushOutput();
 
     return 0;
 }
