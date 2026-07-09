@@ -43,7 +43,6 @@ void for_each_int(int arr[], int n, void(*visit)(int)){
         visit(arr[i]);
     }
 }
-
 // Exer2: 条件判断
 bool is_even(int x){
     return x%2 == 0;
@@ -62,6 +61,13 @@ int count_if_int(int arr[], int n, bool(*pred)(int)){
     }
     return count;
 }
+
+/* Phrase5: Lambda */
+auto f = [](int x){
+    return x+2;
+};
+
+/* Phrase6:  */
 
 
 int main(){
@@ -88,4 +94,6 @@ int main(){
     std::cout << count_if_int(arr, n, is_even) << std::endl;
     std::cout << count_if_int(arr, n, is_positive) << std::endl;
     std::cout << count_if_int(arr, n, is_greater_than_3) << std::endl;
+
+    std::abs(-1);
 }
