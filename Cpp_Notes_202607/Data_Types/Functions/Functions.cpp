@@ -1,4 +1,5 @@
 #include <iostream>
+#include <functional>
 
 /* Phrase1: 函数声明与函数类型 */
 int add(int a, int b){
@@ -63,11 +64,17 @@ int count_if_int(int arr[], int n, bool(*pred)(int)){
 }
 
 /* Phrase5: Lambda */
-auto f = [](int x){
+auto f1 = [](int x){
     return x+2;
 };
 
-/* Phrase6:  */
+/* Phrase6:std::function */
+std::function<int(int, int)> f2;
+struct Mul{
+   int operator()(int a, int b){
+    return a*b;
+   } 
+};
 
 
 int main(){
@@ -95,5 +102,9 @@ int main(){
     std::cout << count_if_int(arr, n, is_positive) << std::endl;
     std::cout << count_if_int(arr, n, is_greater_than_3) << std::endl;
 
-    std::abs(-1);
+    std::cout << "Phrase6----------" << std::endl;
+    f2 = add;
+    std::cout << f2(3,4) << std::endl;
+    f2 = Mul{};
+    std::cout << f2(5,6) << std::endl;
 }
