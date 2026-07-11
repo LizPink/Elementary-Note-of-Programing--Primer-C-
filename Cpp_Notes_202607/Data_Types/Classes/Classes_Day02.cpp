@@ -1,4 +1,4 @@
-/* Day02 */
+/* Day2 */
 // 对象、成员访问、对象指针、对象引用与 this
 #include<iostream>
 
